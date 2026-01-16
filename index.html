@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 1: The Art of Connection</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HTML2Canvas for the screenshot functionality -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <!-- Google Fonts: Quicksand for that round, friendly teacher vibe -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f4f1ea; /* Warm Beige Background */
+            color: #44403c; /* Stone-700 for text */
+        }
+        
+        .glass-panel {
+            background: rgba(253, 252, 248, 0.85); /* Warmer white/cream */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(231, 229, 228, 0.6);
+            box-shadow: 0 10px 25px -5px rgba(68, 64, 60, 0.05), 0 8px 10px -6px rgba(68, 64, 60, 0.01);
+        }
+
+        .input-soft {
+            background: #fafaf9; /* Stone-50 */
+            border: 2px solid #e7e5e4; /* Stone-200 */
+            transition: all 0.3s ease;
+        }
+
+        .input-soft:focus {
+            background: #ffffff;
+            border-color: #556b2f; /* Olive Green */
+            box-shadow: 0 0 0 4px rgba(85, 107, 47, 0.1);
+            outline: none;
+        }
+
+        /* Custom scrollbar for the textarea */
+        textarea::-webkit-scrollbar {
+            width: 10px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: #f5f5f4; 
+            border-radius: 10px;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: #d6d3d1; 
+            border-radius: 10px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: #a8a29e; 
+        }
+
+        .acrostic-letter {
+            text-shadow: 2px 2px 0px rgba(85, 107, 47, 0.15);
+        }
+
+        /* Animation for the thinking bubble */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Modal Animation */
+        .modal-enter {
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Drag and Drop Styles */
+        .draggable-item {
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(85, 107, 47, 0.2);
+        }
+        .drop-zone {
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .drop-zone.drag-over {
+            border-style: solid;
+            transform: scale(1.01);
+        }
+
+        /* Section Transition */
+        .section-fade {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4">
+
+    <!-- Navigation / Progress Header -->
+    <header class="w-full max-w-5xl flex flex-wrap justify-between items-center mb-8 px-4 gap-2">
+        <div>
+            <h1 class="text-2xl font-bold text-[#432818]">Unit 1: The Art of Connection</h1>
+            <p class="text-[#7f7f7f] text-sm">Email Writing & Present Perfect</p>
+        </div>
+        <div class="flex gap-2 flex-wrap justify-end">
+            <!-- Olive Active, Stone Inactive -->
+            <button onclick="switchSection(1)" id="nav-intro" class="px-3 py-1.5 bg-[#556b2f] text-white rounded-full text-xs font-bold shadow-lg shadow-[#556b2f]/20 transition-colors">1. Intro</button>
+            <button onclick="switchSection(2)" id="nav-watch" class="px-3 py-1.5 bg-[#e6e2d3] text-[#78716c] rounded-full text-xs font-bold transition-colors hover:bg-[#d6d3c4]">2. Watch</button>
+            <button onclick="switchSection(3)" id="nav-structure" class="px-3 py-1.5 bg-[#e6e2d3] text-[#78716c] rounded-full text-xs font-bold transition-colors hover:bg-[#d6d3c4]">3. Practice</button>
+            <button onclick="switchSection(4)" id="nav-games" class="px-3 py-1.5 bg-[#e6e2d3] text-[#78716c] rounded-full text-xs font-bold transition-colors hover:bg-[#d6d3c4]">4. Games</button>
+            <button onclick="switchSection(5)" id="nav-grammar" class="px-3 py-1.5 bg-[#e6e2d3] text-[#78716c] rounded-full text-xs font-bold transition-colors hover:bg-[#d6d3c4]">5. Grammar</button>
+        </div>
+    </header>
+
+    <!-- Main Content Wrapper (This is what we capture) -->
+    <main id="student-workspace" class="w-full max-w-4xl glass-panel rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden">
+        
+        <!-- Decoration Circles (Earthy Tones) -->
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#bc6c25] rounded-full mix-blend-multiply filter blur-xl opacity-20"></div>
+        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-[#606c38] rounded-full mix-blend-multiply filter blur-xl opacity-20"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#dda15e] rounded-full mix-blend-multiply filter blur-3xl opacity-10 pointer-events-none"></div>
+
+        <div class="relative z-10">
+            
+            <!-- Global Student Name Header (Appears in both screenshots) -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-stone-200 pb-6 mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-[#432818]" id="section-title">Who is reading me?</h2>
+                    <p class="text-[#7f7f7f] text-sm" id="section-subtitle">Part 1: Defining Audience</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-bold text-[#7f7f7f] uppercase tracking-wide">Name:</label>
+                    <div id="name-container">
+                        <input type="text" id="studentName" class="input-soft px-4 py-2 rounded-full text-[#432818] w-48 text-sm placeholder-stone-400" placeholder="Your Name">
+                    </div>
+                </div>
+            </div>
+
+            <!-- =========================== -->
+            <!-- PART 1: Acrostic & Definition -->
+            <!-- =========================== -->
+            <div id="part-1" class="section-fade">
+                <div class="grid md:grid-cols-2 gap-12 mb-8">
+                    
+                    <!-- Activity 1: The Acrostic -->
+                    <div class="bg-white/60 p-6 rounded-[2rem] border border-white shadow-sm">
+                        <h3 class="text-lg font-bold text-[#556b2f] mb-4 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            1. The Acrostic
+                        </h3>
+                        <p class="text-sm text-stone-500 mb-6">Write one word related to <strong>"communication"</strong> for each letter.</p>
+                        
+                        <div class="space-y-3">
+                            <!-- Letters -->
+                            <div class="flex items-center gap-4"><span class="acrostic-letter text-xl font-black text-[#556b2f] w-6 text-center">A</span><input type="text" class="input-soft w-full px-3 py-1.5 rounded-full text-[#432818]"></div>
+                            <div class="flex items-center gap-4"><span class="acrostic-letter text-xl font-black text-[#556b2f] w-6 text-center">U</span><input type="text" class="input-soft w-full px-3 py-1.5 rounded-full text-[#432818]"></div>
+                            <div class="flex items-center gap-4"><span class="acrostic-letter text-xl font-black text-[#556b2f] w-6 text-center">D</span><input type="text" class="input-soft w-full px-3 py-1.5 rounded-full text-[#432818]"></div>
+                            <div class="flex items-center gap-4"><span class="acrostic-letter text-xl font-black text-[#556b2f] w-6 text-center">I</span><input type="text" class="input-soft w-full px-3 py-1.5 rounded-full text-[#432818]"></div>
+                            <div class="flex items-center gap-4"><span class="acrostic-letter text-xl font-black text-[#556b2f] w-6 text-center">E</span><input type="text" class="input-soft w-full px-3 py-1.5 rounded-full text-[#432818]"></div>
+                            <div class="flex items-center gap-4"><span class="acrostic-letter text-xl font-black text-[#556b2f] w-6 text-center">N</span><input type="text" class="input-soft w-full px-3 py-1.5 rounded-full text-[#432818]"></div>
+                            <div class="flex items-center gap-4"><span class="acrostic-letter text-xl font-black text-[#556b2f] w-6 text-center">C</span><input type="text" class="input-soft w-full px-3 py-1.5 rounded-full text-[#432818]"></div>
+                            <div class="flex items-center gap-4"><span class="acrostic-letter text-xl font-black text--[#556b2f] w-6 text-center">E</span><input type="text" class="input-soft w-full px-3 py-1.5 rounded-full text-[#432818]"></div>
+                        </div>
+                    </div>
+
+                    <!-- Activity 2: The Definition -->
+                    <div class="flex flex-col h-full">
+                        <div class="bg-white/60 p-6 rounded-[2rem] border border-white shadow-sm flex-grow flex flex-col">
+                            <h3 class="text-lg font-bold text-[#bc6c25] mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                2. Synthesis
+                            </h3>
+                            <p class="text-sm text-stone-500 mb-4">Using your words, define <strong>"Audience"</strong>.</p>
+                            <textarea class="input-soft flex-grow w-full p-6 rounded-[1.5rem] resize-none text-[#432818] leading-relaxed text-lg" placeholder="To me, audience means..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Part 1 -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-stone-200">
+                    <button onclick="resetForm()" class="text-stone-400 hover:text-stone-600 text-sm font-semibold">Reset Work</button>
+                    
+                    <div class="flex gap-4">
+                        <!-- Direct Download for Part 1 -->
+                        <button onclick="downloadCurrentView('Part_1')" class="px-6 py-2 rounded-full bg-white border border-[#556b2f] text-[#556b2f] font-bold hover:bg-[#f4f6f0] transition-colors flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            Download Part 1
+                        </button>
+                        
+                        <button onclick="switchSection(2)" class="px-8 py-2 rounded-full bg-[#556b2f] text-white font-bold shadow-md hover:bg-[#3f4f23] transition-colors flex items-center gap-2">
+                            Next: Watch
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =========================== -->
+            <!-- PART 2: Video (Watch & Learn) -->
+            <!-- =========================== -->
+            <div id="part-watch" class="section-fade hidden">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-[#e6e2d3] flex items-center justify-center text-[#556b2f] font-bold">2</div>
+                    <h2 class="text-2xl font-bold text-[#432818]">Writing With Your Audience in Mind</h2>
+                </div>
+
+                <!-- Video Embed -->
+                <div class="bg-stone-900 rounded-2xl overflow-hidden shadow-lg mb-2 aspect-video w-full">
+                    <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/xyH79KQET5E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="text-center mb-8">
+                    <a href="https://www.youtube.com/watch?v=xyH79KQET5E" target="_blank" class="text-xs text-[#bc6c25] hover:text-[#8b4513] underline">Video not loading? Watch on YouTube</a>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="bg-[#fbfaf8] p-6 rounded-[2rem] border border-stone-200 mb-8">
+                    <h3 class="font-bold text-[#556b2f] mb-2 flex items-center gap-2">
+                        <span class="text-xl">📝</span> Your Notes
+                    </h3>
+                    <p class="text-stone-500 text-sm mb-4 font-medium">Take notes as you watch, because they will be useful at the moment of participating in the checking for understanding game.</p>
+                    <textarea id="video-notes" class="input-soft w-full p-4 rounded-xl text-[#432818] resize-none h-40 bg-white" placeholder="Key takeaways..."></textarea>
+                </div>
+
+                <!-- Game Link & Actions -->
+                <div class="flex flex-col items-center gap-4">
+                    <button onclick="checkNotesAndGo()" class="w-full md:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-[#bc6c25] to-[#a0522d] text-white font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2">
+                        <span>Join Checking Game</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </button>
+                    <p class="text-xs text-stone-400 italic">Clicking this button will open Wayground in a new tab.</p>
+                </div>
+
+                <!-- Footer Part Watch -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-stone-200">
+                    <button onclick="switchSection(1)" class="text-stone-500 font-bold hover:text-[#556b2f] flex items-center gap-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                        Back
+                    </button>
+                    
+                    <div class="flex gap-4">
+                        <button onclick="downloadCurrentView('Video_Notes')" class="px-6 py-2 rounded-full bg-white border border-[#556b2f] text-[#556b2f] font-bold hover:bg-[#f4f6f0] transition-colors flex items-center gap-2">
+                            Download Notes
+                        </button>
+                        <button onclick="switchSection(3)" class="px-8 py-2 rounded-full bg-[#556b2f] text-white font-bold shadow-md hover:bg-[#3f4f23] transition-colors flex items-center gap-2">
+                            Next: Practice
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- =========================== -->
+            <!-- PART 3: Tone & Sorting -->
+            <!-- =========================== -->
+            <div id="part-practice" class="section-fade hidden">
+                
+                <!-- Part 3: Tone Detective -->
+                <div class="mb-10">
+                    <h3 class="text-lg font-bold text-[#432818] mb-4 flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-[#e6e2d3] flex items-center justify-center text-[#556b2f] text-xs">3</div>
+                        Tone Detective
+                    </h3>
+                    
+                    <p class="text-stone-500 font-bold mb-6 ml-2">Who do you think these were written for? Why?</p>
+
+                    <div class="grid md:grid-cols-3 gap-4 mb-6">
+                        <!-- Quote 1 -->
+                        <div class="bg-[#f0f4ec] p-4 rounded-2xl border border-[#dce5d4] flex flex-col">
+                            <p class="italic font-medium text-[#432818] text-sm mb-3">“Hey! I’ve been meaning to tell you something crazy!”</p>
+                            <textarea class="input-soft w-full p-3 rounded-xl text-xs text-[#432818] resize-none h-20 mt-auto" placeholder="Who is this for?"></textarea>
+                        </div>
+                        <!-- Quote 2 -->
+                        <div class="bg-[#f6f2eb] p-4 rounded-2xl border border-[#ebe5d9] flex flex-col">
+                            <p class="italic font-medium text-[#432818] text-sm mb-3">“Good afternoon. I hope this message finds you well.”</p>
+                            <textarea class="input-soft w-full p-3 rounded-xl text-xs text-[#432818] resize-none h-20 mt-auto" placeholder="Who is this for?"></textarea>
+                        </div>
+                        <!-- Quote 3 -->
+                        <div class="bg-[#f2ebe5] p-4 rounded-2xl border border-[#e6dad3] flex flex-col">
+                            <p class="italic font-medium text-[#432818] text-sm mb-3">“I’m writing because I’ve been having some problems with my hotel room.”</p>
+                            <textarea class="input-soft w-full p-3 rounded-xl text-xs text-[#432818] resize-none h-20 mt-auto" placeholder="Who is this for?"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- The Character & Bubble -->
+                    <div class="flex justify-center mt-8 mb-10">
+                        <div class="flex flex-col items-center max-w-lg">
+                            <div class="animate-float relative bg-white p-5 rounded-2xl shadow-lg border border-stone-100 mb-2 text-center">
+                                <p class="text-sm text-stone-600 leading-snug">
+                                    There's no <strong class="text-[#bc6c25]">‘wrong’</strong> answer! But you must justify your choice.
+                                    <br>
+                                    Notice how the <em>audience</em> changes how polite or casual the message becomes?
+                                </p>
+                                <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b border-r border-stone-100 transform rotate-45"></div>
+                            </div>
+                            
+                            <svg width="80" height="80" viewBox="0 0 100 100" class="drop-shadow-md mt-2">
+                                <circle cx="50" cy="50" r="45" fill="#dda15e" />
+                                <circle cx="35" cy="45" r="5" fill="#432818" />
+                                <circle cx="65" cy="45" r="5" fill="#432818" />
+                                <path d="M 25 45 C 25 35, 45 35, 45 45 C 45 55, 25 55, 25 45 Z" fill="none" stroke="#432818" stroke-width="2"/>
+                                <path d="M 55 45 C 55 35, 75 35, 75 45 C 75 55, 55 55, 55 45 Z" fill="none" stroke="#432818" stroke-width="2"/>
+                                <line x1="45" y1="45" x2="55" y2="45" stroke="#432818" stroke-width="2"/>
+                                <path d="M 35 65 Q 50 75 65 65" stroke="#432818" stroke-width="3" fill="none" stroke-linecap="round" />
+                                <circle cx="25" cy="55" r="4" fill="#a0522d" opacity="0.3" />
+                                <circle cx="75" cy="55" r="4" fill="#a0522d" opacity="0.3" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 4: Sorting -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-[#432818] mb-4 flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-[#e6e2d3] flex items-center justify-center text-[#556b2f] text-xs">4</div>
+                        Sort: Formal vs Informal
+                    </h3>
+                    
+                    <!-- Drop Zones -->
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div id="formal-zone" class="drop-zone bg-[#f0f4ec] border-2 border-dashed border-[#556b2f] rounded-2xl p-4 min-h-[150px] flex flex-col items-center" 
+                             ondrop="drop(event, 'formal')" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)">
+                            <div class="px-4 py-1 bg-[#556b2f] text-white font-bold rounded-full mb-2 uppercase text-xs">Formal</div>
+                            <div class="text-[#556b2f] text-xs italic pointer-events-none instructions">Drop here</div>
+                        </div>
+
+                        <div id="informal-zone" class="drop-zone bg-[#fbf4e8] border-2 border-dashed border-[#bc6c25] rounded-2xl p-4 min-h-[150px] flex flex-col items-center" 
+                             ondrop="drop(event, 'informal')" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)">
+                            <div class="px-4 py-1 bg-[#bc6c25] text-white font-bold rounded-full mb-2 uppercase text-xs">Informal</div>
+                            <div class="text-[#bc6c25] text-xs italic pointer-events-none instructions">Drop here</div>
+                        </div>
+                    </div>
+
+                    <!-- Bank -->
+                    <div class="bg-[#fbfaf8] p-4 rounded-xl border border-stone-200" id="drag-bank">
+                        <div class="flex flex-wrap gap-2 justify-center">
+                            <div id="item-1" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Asking teacher for help</div>
+                            <div id="item-2" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Travel agency refund request</div>
+                            <div id="item-3" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Telling cousin about trip</div>
+                            <div id="item-4" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Confirming hotel reservation</div>
+                            <div id="item-5" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Meeting classmate for project</div>
+                            <!-- Added 5 new scenarios -->
+                            <div id="item-6" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Applying for a summer internship</div>
+                            <div id="item-7" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Texting a friend about a party</div>
+                            <div id="item-8" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Emailing the principal</div>
+                            <div id="item-9" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Inviting a neighbor to a BBQ</div>
+                            <div id="item-10" draggable="true" ondragstart="drag(event)" class="draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium">Resigning from a part-time job</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Part 2 -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-stone-200">
+                    <button onclick="switchSection(1)" class="text-stone-500 font-bold hover:text-[#556b2f] flex items-center gap-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                        Back
+                    </button>
+                    
+                    <!-- Modal Download for Part 2 -->
+                    <button id="downloadBtnPart2" onclick="openReviewModal()" class="group relative px-8 py-3 rounded-full bg-gradient-to-r from-[#556b2f] to-[#3f4f23] text-white font-bold shadow-lg shadow-[#556b2f]/30 hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        <span class="flex items-center gap-2">
+                            Download Part 3
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- =========================== -->
+            <!-- PART 4: Games Room -->
+            <!-- =========================== -->
+            <div id="part-games" class="section-fade hidden">
+                
+                <h3 class="text-xl font-bold text-[#432818] mb-6 flex items-center gap-2">
+                    <span class="text-2xl">🎮</span>
+                    Game Room
+                </h3>
+
+                <!-- Games Grid (Changed to 2 columns for better layout) -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    
+                    <!-- Game Card 1: Email Writing -->
+                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-stone-100 h-full flex flex-col">
+                        
+                        <!-- Wordwall Link Card -->
+                        <a href="https://wordwall.net/resource/35438963/email-writing" target="_blank" class="group block relative w-full aspect-video bg-[#556b2f] rounded-2xl overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col items-center justify-center text-white text-center p-6">
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#556b2f] to-[#3f4f23] opacity-90"></div>
+                            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full mix-blend-overlay opacity-20 group-hover:scale-150 transition-transform duration-700"></div>
+                            
+                            <div class="relative z-10 flex flex-col items-center gap-4">
+                                <div class="bg-white text-[#556b2f] font-black text-2xl px-4 py-2 rounded-lg shadow-lg tracking-tighter transform group-hover:scale-110 transition-transform">
+                                    Wordwall
+                                </div>
+                                <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full font-bold flex items-center gap-2 mt-2 group-hover:bg-white group-hover:text-[#556b2f] transition-colors text-sm">
+                                    Click to Play
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="mt-6 flex-grow">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-[#432818] text-lg">Email Writing</h4>
+                                <span class="px-3 py-1 bg-[#f0f4ec] text-[#556b2f] text-xs font-bold rounded-full">Tone</span>
+                            </div>
+                            <p class="text-stone-500 text-sm mb-4">Master the structure and tone of formal vs. informal emails.</p>
+                            
+                            <!-- Detailed Reflection Inputs -->
+                            <div class="bg-[#fbfaf8] p-4 rounded-xl border border-stone-200 space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-400 uppercase mb-1">My Score:</label>
+                                    <input type="text" class="input-soft w-full px-3 py-2 rounded-lg text-sm text-[#432818]" placeholder="e.g., 10/12">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-400 uppercase mb-1">Expressions I use the most:</label>
+                                    <textarea class="input-soft w-full p-3 rounded-lg text-sm text-[#432818] resize-none h-20" placeholder="From the game, I often use..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Card 2: Verbs -->
+                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-stone-100 h-full flex flex-col">
+                        
+                        <!-- Wordwall Link Card -->
+                        <a href="https://wordwall.net/resource/4052341/verbs-in-past-and-past-participle" target="_blank" class="group block relative w-full aspect-video bg-[#bc6c25] rounded-2xl overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col items-center justify-center text-white text-center p-6">
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#bc6c25] to-[#a0522d] opacity-90"></div>
+                            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-white rounded-full mix-blend-overlay opacity-20 group-hover:scale-150 transition-transform duration-700"></div>
+                            
+                            <div class="relative z-10 flex flex-col items-center gap-4">
+                                <div class="bg-white text-[#bc6c25] font-black text-2xl px-4 py-2 rounded-lg shadow-lg tracking-tighter transform group-hover:scale-110 transition-transform">
+                                    Wordwall
+                                </div>
+                                <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full font-bold flex items-center gap-2 mt-2 group-hover:bg-white group-hover:text-[#bc6c25] transition-colors text-sm">
+                                    Click to Play
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="mt-6 flex-grow">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-[#432818] text-lg">Past & Participle</h4>
+                                <span class="px-3 py-1 bg-[#fbf4e8] text-[#bc6c25] text-xs font-bold rounded-full">Grammar</span>
+                            </div>
+                            <p class="text-stone-500 text-sm mb-4">Practice regular and irregular verb forms for the Perfect Tenses.</p>
+                            
+                            <!-- Detailed Reflection Inputs -->
+                            <div class="bg-[#fbfaf8] p-4 rounded-xl border border-stone-200 space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-400 uppercase mb-1">My Score:</label>
+                                    <input type="text" class="input-soft w-full px-3 py-2 rounded-lg text-sm text-[#432818]" placeholder="e.g., 15/20">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-400 uppercase mb-1">Confusing / Rarely used verbs:</label>
+                                    <textarea class="input-soft w-full p-3 rounded-lg text-sm text-[#432818] resize-none h-20" placeholder="I found these verbs tricky..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer Part 3 -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-stone-200">
+                    <button onclick="switchSection(3)" class="text-stone-500 font-bold hover:text-[#556b2f] flex items-center gap-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                        Back
+                    </button>
+                    
+                    <div class="flex gap-4">
+                        <button onclick="downloadCurrentView('Games_Results')" class="px-6 py-3 rounded-full bg-gradient-to-r from-[#bc6c25] to-[#a0522d] text-white font-bold shadow-lg shadow-[#bc6c25]/30 hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            <span class="flex items-center gap-2">
+                                Download Results
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                            </span>
+                        </button>
+                        
+                        <button onclick="switchSection(5)" class="px-8 py-3 rounded-full bg-[#556b2f] text-white font-bold shadow-md hover:bg-[#3f4f23] transition-colors flex items-center gap-2">
+                            Next: Grammar
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =========================== -->
+            <!-- PART 5: Grammar (Placeholder) -->
+            <!-- =========================== -->
+            <div id="part-grammar" class="section-fade hidden">
+                <div class="text-center py-20">
+                    <div class="text-6xl mb-6">✏️</div>
+                    <h3 class="text-3xl font-bold text-[#432818] mb-4">Grammar Section Under Construction</h3>
+                    <p class="text-stone-500">The Present Perfect (Simple & Continuous) module is coming up next.</p>
+                </div>
+                 <!-- Footer Part 4 -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-stone-200">
+                    <button onclick="switchSection(4)" class="text-stone-500 font-bold hover:text-[#556b2f] flex items-center gap-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                        Back to Games
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Review Modal (Only for Part Practice) -->
+    <div id="reviewModal" class="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-[2rem] p-8 max-w-lg w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent">
+            <h3 class="text-xl font-bold text-[#556b2f] mb-6 flex items-center gap-2">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                To download, take notes first!
+            </h3>
+            <div class="space-y-4 mb-8">
+                <div class="bg-[#f0f4ec] p-4 rounded-xl border border-[#dce5d4]">
+                    <p class="text-stone-700 font-medium text-sm">Audience determines <span class="text-[#556b2f] font-bold">tone, vocabulary, structure, and purpose</span> in an email.</p>
+                </div>
+                
+                <div class="bg-[#f0f4ec] p-4 rounded-xl border border-[#dce5d4]">
+                    <p class="text-stone-700 font-medium text-sm">Formal emails ≠ informal emails, because the <span class="text-[#556b2f] font-bold">relationship</span> is different.</p>
+                </div>
+
+                <div class="bg-[#fbf4e8] p-4 rounded-xl border border-[#eaddcf] relative overflow-hidden">
+                     <div class="absolute -right-4 -top-4 w-16 h-16 bg-[#dda15e] rounded-full opacity-30"></div>
+                    <p class="text-stone-700 italic text-sm relative z-10">“Whenever you write, you are wearing a hat. The hat changes depending on who reads your message.”</p>
+                </div>
+            </div>
+            <button onclick="finalDownloadPart2()" class="w-full py-3 rounded-xl bg-gradient-to-r from-[#556b2f] to-[#3f4f23] text-white font-bold shadow-lg hover:-translate-y-1 transition-all">
+                Done! (Save Part 3)
+            </button>
+        </div>
+    </div>
+
+    <!-- Note Reminder Modal -->
+    <div id="noteReminderModal" class="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl relative">
+            <button onclick="closeNoteModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600 p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="text-center pt-4">
+                <div class="text-4xl mb-4">📝</div>
+                <h3 class="text-xl font-bold text-[#432818] mb-2">Wait a moment!</h3>
+                <p class="text-stone-600 text-sm mb-6">Please write some notes from the video before joining the game. You'll need them!</p>
+                <button onclick="closeNoteModal()" class="px-6 py-2 bg-[#556b2f] text-white rounded-full font-bold text-sm shadow-lg hover:bg-[#3f4f23] transition-colors">
+                    Okay, I'll take notes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // Section Switching Logic
+        function switchSection(sectionNum) {
+            // IDs for all sections
+            const sections = [
+                document.getElementById('part-1'),
+                document.getElementById('part-watch'),
+                document.getElementById('part-practice'),
+                document.getElementById('part-games'),
+                document.getElementById('part-grammar')
+            ];
+            
+            // Subtitle mapping
+            const titles = [
+                "Part 1: Defining Audience",
+                "Part 2: Watch & Learn",
+                "Part 3: Tone & Scenarios",
+                "Part 4: Games",
+                "Part 5: Grammar"
+            ];
+            
+            const subTitle = document.getElementById('section-subtitle');
+            
+            // Header Tabs styling
+            const navs = [
+                document.getElementById('nav-intro'),
+                document.getElementById('nav-watch'),
+                document.getElementById('nav-structure'),
+                document.getElementById('nav-games'),
+                document.getElementById('nav-grammar')
+            ];
+            
+            // Reset styles and hide all
+            navs.forEach(btn => btn.className = "px-3 py-1.5 bg-[#e6e2d3] text-[#78716c] rounded-full text-xs font-bold transition-colors hover:bg-[#d6d3c4]");
+            sections.forEach(sec => sec.classList.add('hidden'));
+
+            // Show current
+            if (sections[sectionNum - 1]) {
+                sections[sectionNum - 1].classList.remove('hidden');
+                subTitle.innerText = titles[sectionNum - 1];
+                navs[sectionNum - 1].className = "px-3 py-1.5 bg-[#556b2f] text-white rounded-full text-xs font-bold shadow-lg shadow-[#556b2f]/20 transition-colors";
+            }
+        }
+
+        // Check Notes Logic
+        function checkNotesAndGo() {
+            const notes = document.getElementById('video-notes').value.trim();
+            if (notes.length === 0) {
+                // Show reminder
+                const modal = document.getElementById('noteReminderModal');
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            } else {
+                // Go to link
+                window.open('https://wayground.com/join?gc=25518486&source=liveDashboard', '_blank');
+            }
+        }
+
+        function closeNoteModal() {
+            const modal = document.getElementById('noteReminderModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+
+        // Generic Download Function
+        function downloadCurrentView(fileSuffix) {
+            const studentNameInput = document.getElementById('studentName');
+            const nameContainer = document.getElementById('name-container');
+            
+            // Validation: Check if name is empty
+            if (!studentNameInput.value.trim()) {
+                alert("Please enter your name at the top right before downloading.");
+                studentNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                studentNameInput.focus();
+                studentNameInput.classList.add('ring-4', 'ring-red-300', 'border-red-500');
+                setTimeout(() => {
+                    studentNameInput.classList.remove('ring-4', 'ring-red-300', 'border-red-500');
+                }, 3000);
+                return; // Stop execution
+            }
+
+            const workspace = document.getElementById('student-workspace');
+            const studentName = studentNameInput.value.trim() || 'Student';
+            
+            // Temporary UI feedback
+            const originalBtn = document.activeElement;
+            const originalText = originalBtn ? originalBtn.innerText : '';
+            if(originalBtn) originalBtn.innerText = "Capturing...";
+
+            // --- FIX FOR NAME RENDERING ---
+            // Create a temporary text element to replace the input for the screenshot
+            const nameSpan = document.createElement('div');
+            nameSpan.className = studentNameInput.className; // Copy styling
+            nameSpan.textContent = studentName;
+            nameSpan.style.display = 'inline-block';
+            nameSpan.style.border = 'none'; // Optional: make it look cleaner in screenshot
+            nameSpan.style.background = 'transparent';
+            nameSpan.style.paddingTop = '0.5rem'; // Minor adjustment for vertical alignment text vs input
+            nameSpan.style.color = '#432818'; // Explicitly set text color
+            
+            // Hide input, show span
+            studentNameInput.style.display = 'none';
+            nameContainer.appendChild(nameSpan);
+
+            setTimeout(() => {
+                html2canvas(workspace, {
+                    scale: 2, 
+                    backgroundColor: null, 
+                    useCORS: true,
+                    // Ignore iframe content
+                    ignoreElements: (element) => element.tagName === 'IFRAME' 
+                }).then(canvas => {
+                    // --- RESTORE INPUT ---
+                    nameContainer.removeChild(nameSpan);
+                    studentNameInput.style.display = 'block';
+
+                    const link = document.createElement('a');
+                    // Filename cleanup
+                    const safeName = studentName.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, '_');
+                    link.download = `Audience_${fileSuffix}_${safeName}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    if(originalBtn) originalBtn.innerText = "Saved!";
+                    setTimeout(() => {
+                        if(originalBtn) originalBtn.innerText = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    // Restore input on error too
+                    if(nameSpan.parentNode) nameContainer.removeChild(nameSpan);
+                    studentNameInput.style.display = 'block';
+                    
+                    console.error("Screenshot failed:", err);
+                    alert("Save failed. Try refreshing or using a different browser.");
+                });
+            }, 500); 
+        }
+
+        // Modal Logic (Part 3 Only)
+        function openReviewModal() {
+            const studentNameInput = document.getElementById('studentName');
+            
+            // Validation: Check if name is empty before opening modal
+            if (!studentNameInput.value.trim()) {
+                alert("Please enter your name at the top right first.");
+                studentNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                studentNameInput.focus();
+                studentNameInput.classList.add('ring-4', 'ring-red-300', 'border-red-500');
+                setTimeout(() => {
+                    studentNameInput.classList.remove('ring-4', 'ring-red-300', 'border-red-500');
+                }, 3000);
+                return; // Stop execution
+            }
+
+            const modal = document.getElementById('reviewModal');
+            const modalContent = document.getElementById('modalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.add('modal-enter');
+            }, 10);
+        }
+
+        function finalDownloadPart2() {
+            const modal = document.getElementById('reviewModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                downloadCurrentView('Part_3');
+            }, 300);
+        }
+
+        // Drag & Drop
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+            if(ev.currentTarget.id === 'formal-zone') {
+                ev.currentTarget.style.backgroundColor = '#ecf3e6'; // Light Sage
+                ev.currentTarget.style.borderColor = '#556b2f'; // Olive
+            } else {
+                ev.currentTarget.style.backgroundColor = '#fbf4e8'; // Light Sand
+                ev.currentTarget.style.borderColor = '#bc6c25'; // Terracotta
+            }
+        }
+        function leaveDrop(ev) {
+            ev.currentTarget.classList.remove('drag-over');
+            ev.currentTarget.style.backgroundColor = '';
+            ev.currentTarget.style.borderColor = '';
+        }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        function drop(ev, type) {
+            ev.preventDefault();
+            leaveDrop(ev);
+            var data = ev.dataTransfer.getData("text");
+            var draggedElement = document.getElementById(data);
+            let targetZone = ev.target.closest('.drop-zone');
+            if (targetZone) {
+                targetZone.appendChild(draggedElement);
+                targetZone.querySelector('.instructions').style.display = 'none';
+                
+                // Styling for dropped items
+                const baseClass = "draggable-item bg-white px-2 py-2 rounded shadow-sm border text-xs font-bold mb-2 w-full text-center";
+                if(type === 'formal') {
+                    draggedElement.className = `${baseClass} border-[#556b2f]/30 text-[#556b2f]`;
+                } else {
+                    draggedElement.className = `${baseClass} border-[#bc6c25]/30 text-[#bc6c25]`;
+                }
+            }
+        }
+
+        function resetForm() {
+            if(confirm("Clear work?")) {
+                document.querySelectorAll('input:not(#studentName), textarea').forEach(el => el.value = '');
+                const bank = document.getElementById('drag-bank').querySelector('.flex');
+                if(bank) {
+                    document.querySelectorAll('.draggable-item').forEach(item => {
+                        bank.appendChild(item);
+                        // Reset style to original
+                        item.className = "draggable-item bg-white px-3 py-2 rounded-lg shadow-sm border border-stone-200 text-[#432818] text-xs font-medium";
+                    });
+                }
+                document.querySelectorAll('.instructions').forEach(el => el.style.display = 'block');
+            }
+        }
+    </script>
+</body>
+</html>
