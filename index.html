@@ -385,20 +385,27 @@
 
                 <!-- Footer Part 2 -->
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-stone-200">
-                    <button onclick="switchSection(1)" class="text-stone-500 font-bold hover:text-[#556b2f] flex items-center gap-2 text-sm">
+                    <button onclick="switchSection(2)" class="text-stone-500 font-bold hover:text-[#556b2f] flex items-center gap-2 text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                         Back
                     </button>
                     
-                    <!-- Modal Download for Part 2 -->
-                    <button id="downloadBtnPart2" onclick="openReviewModal()" class="group relative px-8 py-3 rounded-full bg-gradient-to-r from-[#556b2f] to-[#3f4f23] text-white font-bold shadow-lg shadow-[#556b2f]/30 hover:shadow-xl hover:scale-105 transition-all duration-300">
-                        <span class="flex items-center gap-2">
-                            Download Part 3
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                        </span>
-                    </button>
+                    <div class="flex gap-4 items-center">
+                        <!-- Modal Download for Part 2 -->
+                        <button id="downloadBtnPart2" onclick="openReviewModal()" class="group relative px-6 py-2 rounded-full bg-white border border-[#556b2f] text-[#556b2f] font-bold hover:bg-[#f4f6f0] transition-colors flex items-center gap-2 shadow-sm">
+                            <span class="flex items-center gap-2">
+                                Download Part 3
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                            </span>
+                        </button>
+
+                        <button onclick="switchSection(4)" class="px-8 py-2 rounded-full bg-[#556b2f] text-white font-bold shadow-md hover:bg-[#3f4f23] transition-colors flex items-center gap-2">
+                            Next: Games
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 
