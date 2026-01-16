@@ -17,6 +17,23 @@
             background-color: #f4f1ea; /* Warm Beige Background */
             color: #44403c; /* Stone-700 for text */
         }
+
+        /* --- SECURITY STYLES --- */
+        /* Prevent text selection everywhere... */
+        * {
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        
+        /* ...except in input boxes where students need to type */
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
         
         .glass-panel {
             background: rgba(253, 252, 248, 0.85); /* Warmer white/cream */
@@ -804,6 +821,25 @@
                 document.querySelectorAll('.instructions').forEach(el => el.style.display = 'block');
             }
         }
+
+        // --- SECURITY / ANTI-CHEAT ---
+        // Disable Right Click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Disable Copy/Cut/Paste
+        document.addEventListener('copy', e => {
+            e.preventDefault();
+            alert("Copying is not allowed.");
+        });
+        
+        document.addEventListener('cut', e => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('paste', e => {
+            e.preventDefault();
+            alert("Pasting is not allowed. Please type your own answers.");
+        });
     </script>
 </body>
 </html>
